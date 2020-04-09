@@ -1,0 +1,120 @@
+html,body,div,h3,h4,h5,h6,p,ul,li,button {
+    margin: 0px;
+    padding: 0px;
+}
+img{
+    display: block;
+}
+ul,li {
+    list-style: none;
+}
+.flex{
+    display: flex;
+}
+.item-center{
+    display: flex;
+    align-items: center;
+}
+.pointer{
+    cursor: pointer;
+}
+.m-r-10{
+    margin-right: 10px;
+}
+.m-r-20{
+    margin-right: 20px;
+}
+.table-label-row{
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+.content-wrapper{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+/*slider组件伸缩状态宽度*/
+.layout .ant-layout-sider{
+    flex: 0 0 220px !important;
+    max-width: 220px !important;
+    min-width: 220px !important;
+    width:220px !important;
+    background: #fff;
+    height: 100%;
+    overflow: auto;
+}
+.layout .ant-layout-sider-collapsed{
+    flex: 0 0 80px !important;
+    max-width: 80px !important;
+    min-width: 80px !important;
+    width:80px !important;
+    height: 100%;
+    overflow: auto;
+}
+/*菜单menu选中色*/
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected{
+    background-color: #faf8f5 !important;
+}
+.ant-menu-inline .ant-menu-item::after{
+    left:0;
+    right:auto;
+}
+.layout .ant-menu-root{
+    border-right: none;
+}
+.ant-menu-item,.ant-menu-submenu-title {
+    text-align: left;
+}
+.ant-menu-inline .ant-menu-item, .ant-menu-inline .ant-menu-submenu-title{
+    width:100%;
+}
+
+/**search-header form**/
+.search-header-form .ant-form-item{
+    display: flex;
+}
+.search-header-form .ant-form-item-control-wrapper {
+    flex: 1;
+}
+.search-header-form .ant-form-item-label {
+    width:70px;
+    text-align: left;
+}
+/* .search-header-form .ant-form-item-with-help{
+    margin-bottom: 0;
+} */
+/* .form-modal .ant-form-item+ .ant-form-item-with-help{
+    margin-bottom: 0 !important;
+} */
+.form-modal .ant-form-item-with-help{
+    margin-bottom: 0 !important;
+}
+.form-modal .ant-form-item{
+    margin-bottom: 19px;
+}
+
+.form-span{
+    display: flex;
+    margin-bottom: 0 !important;
+}
+.form-modal .ant-form-item-label{
+    line-height: 26px;
+}
+.form-row .ant-form-item-label,.form-row .ant-form-item-control{
+    line-height: 32px;
+}
+
+.form-span .ant-form-item-label,.form-span .ant-form-item-control{
+    line-height: 40px;
+}
+
+.ant-empty{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
