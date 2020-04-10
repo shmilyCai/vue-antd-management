@@ -37,7 +37,7 @@
                     <a-button type="primary" @click="onSearch" class="m-r-10">筛选</a-button>
                     <a-button class="m-r-10" @click="onReset">重置</a-button>
                     <a v-if="backupSearchConfigList.length>currSize" @click="toggleExpand">
-                        收起
+                        {{expand?"收起":"展开"}}
                         <a-icon :type="expand ? 'up' : 'down'" />
                     </a>
                 </div>
@@ -66,6 +66,9 @@ export default {
     },
     created() {
         this.initConfig();
+        var a = {name:1};
+        var s = a?.name?.a?.a;
+        console.log(s)
     },
     methods: {
         /**
