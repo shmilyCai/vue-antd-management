@@ -4,7 +4,6 @@
             :searchConfig = "searchConfig"
             @search = "getList"
             >
-            
         </search-header>
         <table-list 
             @getList = "getList" 
@@ -13,21 +12,31 @@
             :pageInfo = "pagination">
                 <template  slot = "handleBtn" slot-scope="props">
                     <div class="table-label-row">
-                        <span>label</span>
                         <div>
-                            <a-button 
-                                v-for = "(item,index) in handleList"
-                                class="m-r-10" 
-                                :key = "index" 
-                                @click = "handleFn(item,props)"
-                                :type="item.buttonType || ''" 
-                                :icon="item.icon">{{item.name}}</a-button>
+                            <a-button class = "m-r-20">
+                                批量上架
+                            </a-button>
+                            <a-button>
+                                批量下架
+                            </a-button>
+                        </div>
+                        <div>
+                            <a-button icon = "export" @click = "onExport">
+                                导出
+                            </a-button>
                         </div>
                     </div>
                 </template>
+                <template slot = "productStatus" slot-scope="props">
+                    <div class="item-center">
+                        <span class="circle c2"></span>
+                        {{getProductStatusStr(props)}}
+                    </div>
+                </template>
                 <template slot = "opreation" slot-scope="props">
-                    <a @click = "modifyFuc(props)">修改</a>
-                    <a @click = "deleteFuc(props)">删除</a>
+                    <a-button>
+                        上架
+                    </a-button>
                 </template>
         </table-list>
         <add-modal 
@@ -62,17 +71,9 @@ import {listApi,listDeleteApi} from "@api"
             }
         },
         created(){
-            setTimeout(()=>{
-                this.searchConfig.id5.option = [
-                    {name:"张哥1",value:"haha1"},
-                    {name:"张哥2",value:"haha2"},
-                    {name:"张哥3",value:"haha3"},
-                ];
-                this.dataSource = [
-                    {id:"id1",priority:"",level:1,content:"消息内容",user:"张哥",type:"模板1",verify_status:"待审核",use_status:"已使用"},
-                    {id:"id2",priority:"",level:2,content:"消息内容",user:"张哥",type:"模板1",verify_status:"待审核",use_status:"已使用"}
-                ]
-            })
+            this.dataSource = [
+                {productStatus:1}
+            ]
         },
         methods:{
             /**
@@ -82,10 +83,31 @@ import {listApi,listDeleteApi} from "@api"
                 let {handleFuc} = item;
                 this[handleFuc](item,props);
             },
+            /**
+             * 转换产品状态
+             */
+            getProductStatusStr(props){
+                return "在售中"
+            },
         }
     }
 </script>
 
 <style lang="scss" scoped>
-
+.circle{
+    display: block;
+    height: 8px;
+    width: 8px;
+    border-radius: 8px;
+    margin-right: 5px;
+    &.c1{
+        background: #dac6b7;
+    }
+    &.c2{
+        background: #52c41a;
+    }
+    &.c3{
+        background: #d9d9d9;
+    }
+}
 </style>

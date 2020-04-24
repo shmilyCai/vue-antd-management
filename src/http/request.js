@@ -17,6 +17,7 @@ if (devHostReg.test(host)) {//开发环境请求地址
 }else {
     defaultUrl = "http://192.168.1.3/";
 }
+export {defaultUrl};
 axios.interceptors.request.use(
     config => {
         let token = vueCookie.get("token");

@@ -10,7 +10,7 @@ import {
     Input,
     InputNumber,
     Layout,
-    LocaleProvider,
+    ConfigProvider,
     Pagination,
     Slider,
     Row,
@@ -25,11 +25,14 @@ import {
     Form,
     Dropdown,
     Divider,
+    Tabs,
+    Switch,
 } from 'ant-design-vue';
 
 
 import 'ant-design-vue/dist/antd.less';
 
+Vue.use(Switch);
 Vue.use(Breadcrumb);
 Vue.use(Button);
 Vue.use(Checkbox);
@@ -41,7 +44,7 @@ Vue.use(Input);
 Vue.use(InputNumber);
 Vue.use(Layout);
 Vue.use(Select);
-Vue.use(LocaleProvider);
+Vue.use(ConfigProvider);
 Vue.use(Pagination);
 Vue.use(Radio);
 Vue.use(Row);
@@ -53,6 +56,7 @@ Vue.use(Menu);
 Vue.use(Dropdown);
 Vue.use(Modal);
 Vue.use(Divider);
+Vue.use(Tabs);
 
 
 Vue.prototype.$message = message;

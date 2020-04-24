@@ -2,6 +2,15 @@ html,body,div,h3,h4,h5,h6,p,ul,li,button {
     margin: 0px;
     padding: 0px;
 }
+button{
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+}
+button:active{
+    opacity: .8;
+}
 img{
     display: block;
 }
@@ -10,6 +19,10 @@ ul,li {
 }
 .flex{
     display: flex;
+}
+.flex1{
+    flex:1;
+    width: 0;
 }
 .item-center{
     display: flex;
@@ -23,6 +36,9 @@ ul,li {
 }
 .m-r-20{
     margin-right: 20px;
+}
+.m-r-30{
+    margin-right: 30px;
 }
 .table-label-row{
     margin-bottom: 20px;
@@ -117,4 +133,11 @@ ul,li {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+.logo-upload .ant-upload.ant-upload-select-picture-card,
+.logo-upload .ant-upload-list-picture-card .ant-upload-list-item
+{
+    height:118px;
+    width: 90px;
+    margin-top: 4px;
 }

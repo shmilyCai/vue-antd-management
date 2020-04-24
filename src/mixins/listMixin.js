@@ -79,5 +79,11 @@ export const listMixin = {
                 this.dataSource = [];
             })
         },
+        /**
+         * 导出
+         */
+        onExport(){
+
+        },
     },
 }

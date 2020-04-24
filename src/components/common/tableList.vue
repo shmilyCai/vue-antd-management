@@ -12,9 +12,10 @@
         </div>
         <div class="list-wrapper">
             <a-table 
+                :indentSize = "0"
                 :columns="columns" 
                 :rowSelection = "isSelectRow?{selectedRowKeys,onChange:onSelectedChange}:null"
-                :rowKey="(record,index) => index" 
+                :rowKey="(record,index) => record.id || index" 
                 :dataSource="dataSource" 
                 :pagination = "false"
                 :loading="loading" 

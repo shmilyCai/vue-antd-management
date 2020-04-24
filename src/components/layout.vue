@@ -3,28 +3,28 @@
         <a-layout-header class="layout-header">
             <div class="item-center">
                 <div class="layout-logo pointer" @click = "goLogin">
-                    <img src="../assets/logo.png" alt="">
-                    <p>后台管理系统</p>
+                    <img src="../assets/login-logo.png" alt="">
+                    <p>金融小店</p>
                 </div>
-                <a-icon class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="()=> collapsed = !collapsed" />
+                <!-- <a-icon class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="()=> collapsed = !collapsed" /> -->
             </div>
             <div class="item-center">
-                <div>
+                <div class = "user-name">
                     <a-dropdown>
                         <span class="pointer" href="#">
-                            {{currentOrg}}
+                            欢迎，张三
                             <a-icon type="caret-down" />
                         </span>
                         <a-menu slot="overlay">
-                            <a-menu-item v-for="(item,index) in orgList" :key="index">
+                            <a-menu-item @click = "onOrgListChange(item)"  v-for="(item,index) in orgList" :key="index">
                                 <a href="javascript:;">{{item.name}}</a>
                             </a-menu-item>
                         </a-menu>
                     </a-dropdown>
                 </div>
                 <div class="layout-user">
-                    <img src="../assets/default-user.png" alt="">
-                    <span>张三</span>
+                    <a-icon type = "logout"></a-icon>
+                    <span>退出登录</span>
                 </div>
             </div>
         </a-layout-header>
@@ -70,11 +70,35 @@
                 </a-layout-content>
             </a-layout>
         </a-layout>
+        <a-modal 
+            :footer = "null"
+            :visible = "tipModifyPwdVisible">
+            <div class="pwd-wrapper">
+                <img class="pwd-tip" src="../assets/pwd-tip.png" alt="">
+                <p class="tip1">当前密码为默认密码</p>
+                <p class="tip2">为保证您的账户安全，请尽快修改</p>
+                <div>
+                    <a-button class="m-r-20" @click = "tipModifyPwdVisible = false;pwdVisible = true;" type = "primary">立即修改</a-button>
+                    <a-button @click = "tipModifyPwdVisible = false">下次再说</a-button>
+                </div>
+            </div>
+        </a-modal>
+        <add-modal 
+            ref = "modifyPwdModal"
+            title = "修改密码"
+            fixedTitle
+            @onClose = "pwdVisible = false"
+            :formItemLayout = "formItemLayout"
+            :visible = "pwdVisible"
+            :formConfig = "modifyPwdConfig">
+
+        </add-modal>
     </div>
 
 </template>
 <script>
 import { menuList } from "../config/menuConfig";
+import {getModifyPwdConfig} from "./layoutFormConfig";
 export default {
     data() {
         return {
@@ -84,9 +108,16 @@ export default {
             isEmpty:false,//是否是空的container
             openKeys: [], //默认展开sub-menu的项
             orgList: [
-                { name: "修改密码" },
+                { name: "修改密码" ,type:"modifyPassword"},
             ], //组织列表
-            currentOrg: "管理后台" //当前组织
+            currentOrg: "管理后台", //当前组织
+            tipModifyPwdVisible:false,
+            pwdVisible:false,
+            formItemLayout:{
+                labelCol: { span: 6 },
+                wrapperCol: { span: 16 },
+            },
+            modifyPwdConfig:getModifyPwdConfig(this),
         };
     },
     created() {
@@ -114,6 +145,14 @@ export default {
             let { bread = [],isEmpty } = this.$router.history.current.meta;
             this.breadList = bread;
             this.isEmpty = isEmpty;
+            let path = this.$route.path.split("/");
+            this.openKeys = [`/${path[1]}`];
+        },
+        onOrgListChange(e){
+            let {type} = e;
+            if(type == "modifyPassword"){
+                this.pwdVisible = true;
+            }
         }
     },
     watch: {
@@ -131,12 +170,25 @@ export default {
         width: 200px;
         display: flex;
         align-items: center;
-        font-size: 18px;
+        font-size: 16px;
         color: #0e1118;
         img {
-            height: 20px;
-            width: 28px;
-            margin-right: 8px;
+            height: 22px;
+            margin-right: 10px;
+        }
+        p{
+            position: relative;
+            padding-left: 10px;
+            &:before{
+                content:"";
+                display: block;
+                position:absolute;
+                top:22px;
+                left: 0;
+                height: 18px;
+                width: 1px;
+                background: rgba(#42413e,.6);
+            }
         }
     }
     &-content {
@@ -159,9 +211,10 @@ export default {
         display: flex;
         align-items: center;
         margin-left: 25px;
-        img {
-            height: 20px;
-            margin-right: 10px;
+        color:#5f5f5f;
+        cursor: pointer;
+        span {
+            margin-left: 5px;
         }
     }
     .trigger {
@@ -178,11 +231,34 @@ export default {
     &-wrapper {
         height: 100%;
     }
+    .user-name{
+        color:#5f5f5f;
+    }
 }
 .bread-row {
     text-align: left;
     padding: 17px;
     background: #fff;
     margin-left: 3px;
+}
+.pwd-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content:center;
+    padding-bottom:50px;
+    .pwd-tip{
+        height: 60px;
+        margin:30px 0 40px 0;
+    }
+    .tip1{
+        font-size: 22px;
+        color:#000;
+        font-weight: bold;
+    }
+    .tip2{
+        color:rgba(0,0,0,.4);
+        margin:5px 0 30px 0;
+    }
 }
 </style>

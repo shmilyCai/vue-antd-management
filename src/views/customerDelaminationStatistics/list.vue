@@ -1,19 +1,14 @@
 <template>
     <div class="content-wrapper">
-        <search-header
-            :searchConfig = "searchConfig"
-            @search = "getList"
-            >
-            
-        </search-header>
         <table-list 
             @getList = "getList" 
+            :isSelectRow = "false"
             :columns = "listColumns"
             :dataSource = "dataSource"
             :pageInfo = "pagination">
                 <template  slot = "handleBtn" slot-scope="props">
                     <div class="table-label-row">
-                        <span>label</span>
+                        <span>客户分层表</span>
                         <div>
                             <a-button 
                                 v-for = "(item,index) in handleList"
@@ -29,19 +24,14 @@
                     <a @click = "modifyFuc(props)">修改</a>
                     <a @click = "deleteFuc(props)">删除</a>
                 </template>
+                
         </table-list>
-        <add-modal 
-            :formData = "formData" 
-            :visible = "formModalVisible"
-            :formConfig = "formConfig"
-            @onClose = "formModalVisible = false"
-            />
     </div>
 </template>
 
 <script>
 
-import {searchConfig,listColumns,formModalConfig} from "./formConfig";
+import {listColumns} from "./formConfig";
 import {listMixin} from "@mixins/listMixin";
 import {listApi,listDeleteApi} from "@api"
     export default {
@@ -49,12 +39,9 @@ import {listApi,listDeleteApi} from "@api"
         data(){
             return{
                 handleList:[
-                    {name:"添加模板",buttonType:"primary",icon:"plus",handleFuc:"addFuc"},
-                    {name:"批量删除",handleFuc:"batchDeleteFuc"},
+                    {name:"导出",icon:"export",handleFuc:"exportFuc"},
                 ],
-                searchConfig,
                 listColumns,
-                formConfig:formModalConfig(),
                 api:{
                     listApi,
                     listDeleteApi,
@@ -63,14 +50,11 @@ import {listApi,listDeleteApi} from "@api"
         },
         created(){
             setTimeout(()=>{
-                this.searchConfig.id5.option = [
-                    {name:"张哥1",value:"haha1"},
-                    {name:"张哥2",value:"haha2"},
-                    {name:"张哥3",value:"haha3"},
-                ];
                 this.dataSource = [
-                    {id:"id1",priority:"",level:1,content:"消息内容",user:"张哥",type:"模板1",verify_status:"待审核",use_status:"已使用"},
-                    {id:"id2",priority:"",level:2,content:"消息内容",user:"张哥",type:"模板1",verify_status:"待审核",use_status:"已使用"}
+                    {id:"id1",priority:"",level:1,content:"消息内容",
+                    user:"张哥",type:"模板1",verify_status:"待审核",
+                    use_status:"已使用",
+                    },
                 ]
             })
         },

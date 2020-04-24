@@ -4,7 +4,7 @@
         <div class="login-box">
             <div class="login-title">
                 <img src="../assets/login-logo.png" alt="">
-                <span>招聘系统</span>
+                <span>金融小店管理系统</span>
             </div>
             <div class="login-form">
                 <a-form
@@ -84,7 +84,13 @@ import VueCookies from "vue-cookies";
     .top-bg{
         height:36vh;
         width: 100vw;
-        background-image: linear-gradient(-21deg,#b39d8d 0%,#d1bdae 75%,#efddce 100%),linear-gradient(#836750,#830750);
+        background-image: linear-gradient(-21deg, 
+		#b39d8d 0%, 
+		#d1bdae 75%, 
+		#efddce 100%), 
+	linear-gradient(
+		#836750, 
+		#836750);
         background-blend-mode: normal,normal;
     }
     &-box{

@@ -4,7 +4,6 @@
             :searchConfig = "searchConfig"
             @search = "getList"
             >
-            
         </search-header>
         <table-list 
             @getList = "getList" 
@@ -13,21 +12,18 @@
             :pageInfo = "pagination">
                 <template  slot = "handleBtn" slot-scope="props">
                     <div class="table-label-row">
-                        <span>label</span>
+                        <span>订单明细表</span>
                         <div>
-                            <a-button 
-                                v-for = "(item,index) in handleList"
-                                class="m-r-10" 
-                                :key = "index" 
-                                @click = "handleFn(item,props)"
-                                :type="item.buttonType || ''" 
-                                :icon="item.icon">{{item.name}}</a-button>
+                            <a-button icon = "export" @click = "onExport">
+                                导出
+                            </a-button>
                         </div>
                     </div>
                 </template>
                 <template slot = "opreation" slot-scope="props">
-                    <a @click = "modifyFuc(props)">修改</a>
-                    <a @click = "deleteFuc(props)">删除</a>
+                    <a-button>
+                        上架
+                    </a-button>
                 </template>
         </table-list>
         <add-modal 
@@ -62,17 +58,6 @@ import {listApi,listDeleteApi} from "@api"
             }
         },
         created(){
-            setTimeout(()=>{
-                this.searchConfig.id5.option = [
-                    {name:"张哥1",value:"haha1"},
-                    {name:"张哥2",value:"haha2"},
-                    {name:"张哥3",value:"haha3"},
-                ];
-                this.dataSource = [
-                    {id:"id1",priority:"",level:1,content:"消息内容",user:"张哥",type:"模板1",verify_status:"待审核",use_status:"已使用"},
-                    {id:"id2",priority:"",level:2,content:"消息内容",user:"张哥",type:"模板1",verify_status:"待审核",use_status:"已使用"}
-                ]
-            })
         },
         methods:{
             /**
@@ -87,5 +72,4 @@ import {listApi,listDeleteApi} from "@api"
 </script>
 
 <style lang="scss" scoped>
-
 </style>

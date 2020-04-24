@@ -48,6 +48,7 @@
 
 <script>
 import { chunkArr } from "@utils";
+import moment from "moment";
 export default {
     props: {
         searchConfig: {
@@ -66,9 +67,6 @@ export default {
     },
     created() {
         this.initConfig();
-        var a = {name:1};
-        var s = a?.name?.a?.a;
-        console.log(s)
     },
     methods: {
         /**
@@ -94,11 +92,26 @@ export default {
          */
         onSearch(e) {
             e.preventDefault();
-            this.form.validateFieldsAndScroll((err, values) => {
+            this.form.validateFieldsAndScroll((err, fieldsValue) => {
                 if (!err) {
-                    console.log("查询参数: ", values);
-                    values.current = 1;
-                    this.$emit("search", values);
+                    let {searchConfig} = this;
+                    for(let i in searchConfig){
+                        let {type,codeName} = searchConfig[i];
+                        if(type == "dateRangePicker"){
+                            if(fieldsValue[i]){
+                                fieldsValue[codeName[0]] = moment(fieldsValue[i][0]).format("YYYY-MM-DD");
+                                fieldsValue[codeName[1]] = moment(fieldsValue[i][1]).format("YYYY-MM-DD");
+                                delete fieldsValue[i];
+                            }
+                            
+                            // fieldsValue[i] = fieldsValue[i].map((item)=>{
+                            //     return moment(item).format("YYYY-MM-DD");
+                            // })
+                        }
+                    }
+                    console.log("查询参数: ", fieldsValue);
+                    fieldsValue.current = 1;
+                    this.$emit("search", fieldsValue);
                 }
             });
         },
