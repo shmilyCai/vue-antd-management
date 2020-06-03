@@ -24,7 +24,7 @@
                     v-for = "(item) in columns" 
                     :slot="item.slot" 
                     slot-scope="text,record" >
-                    <slot v-if="!!item.slot" :record = "record" :name = "item.slot"></slot>
+                    <slot v-if="!!item.slot" :record = "record" :text = "text" :name = "item.slot"></slot>
                 </template>
             </a-table>
             
@@ -58,7 +58,7 @@ export default {
         },
         isSelectRow:{//是否显示选择行
             type:Boolean,
-            default:true,
+            default:false,
         },
         dataSource:{//数据源
             type:Array,
@@ -91,30 +91,32 @@ export default {
          */
         cancelSelected(){
             this.selectedRowKeys = [];
+            this.$emit("onSelected",[]);
         },
         /**
          * 列表选中事件
          */
         onSelectedChange(e){
             this.selectedRowKeys = e;
+            this.$emit("onSelected",e);
         },
         /**
          * 翻页事件
          */
         onPageChange(current){
-            this.$emit("getList",{current});
+            this.$emit("getList",{pageNo:current});
         },
         /**
          * table header tab事件
          */
-        handleTableChange(e){
-            console.log(e)
+        handleTableChange(pagination,filters,sorter){
+            this.$emit("handleTableChange",pagination,filters,sorter);
         },
         /**
          * pageSize change 事件
          */
         onShowSizeChange(current,size){
-            this.$emit("getList",{current,size});
+            this.$emit("getList",{pageNo:current,pageSize:size});
         }
     }
 };

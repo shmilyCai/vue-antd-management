@@ -43,8 +43,32 @@
                                 {{item[value.optionName] || item.name}}
                             </a-select-option>
                         </a-select>
+                        <a-radio-group 
+                            v-if = "value.type == 'radio'"
+                            v-decorator="[
+                                            key,
+                                            {rules: value.rules},
+                                        ]"
+                            >
+                        <a-radio 
+                                v-for = "(item) in value.option" 
+                                :currentItem = "item.currentItem"
+                                :key = "(item[value.optionValue] || item.value)+''" 
+                                :value="(item[value.optionValue] || item.value)+''">
+                                {{item[value.optionName] || item.name}}
+                            </a-radio>
+                        </a-radio-group>
+                        <a-date-picker
+                            @change = "onDateChange(key,arguments)"
+                            v-if = "value.type === 'datePicker'"
+                            style = "width:100%"
+                            :placeholder = "value.placeholder || `请选择${value.label}`"
+                            v-decorator="[key,{rules: value.rules,dateNormalize},]"
+                            format="YYYY-MM-DD"
+                        />
                         <a-upload
                             v-if = "value.type === 'logoUpload'"
+                            :headers = "uploadHeaders"
                             v-decorator="[
                                 key,
                                 {
@@ -70,6 +94,7 @@
 
 <script>
 import {defaultUrl} from "@http/request";
+import moment  from "moment";
     export default {
         props:{
             formConfig:{//form配置
@@ -93,8 +118,9 @@ import {defaultUrl} from "@http/request";
         },
         data(){
             return{
-                uploadAction:defaultUrl+"/file/uploadFile",
-                form:this.$form.createForm(this, { name: 'formpackage' })
+                uploadAction:defaultUrl+"/base/upload/file/upload",
+                form:this.$form.createForm(this, { name: 'formpackage' }),
+                uploadHeaders:{clientId:'ijmY0Zn8WpurMFvAxwWMoJOw60Ka2wt0'},
             }
         },
         mounted(){
@@ -112,17 +138,40 @@ import {defaultUrl} from "@http/request";
                 let fileList = e.fileList || [];
                 fileList.map((item)=>{
                     if(item.response){
-                        let {fileDownloadUrl,fileName} = item.response.data;
-                        f.push({
-                            url:fileDownloadUrl,
-                            name:fileName,
-                            uid:new Date().getTime(),
-                        })
+                        let data = item.response.data;
+                        if(item.response?.code == "0000000000"){
+                            let {filePath,fileName,url,fullPath} = data;
+                            f.push({
+                                url:fullPath,
+                                name:fileName,
+                                filePath:filePath+fileName,
+                                uid:new Date().getTime(),
+                            })
+                        }else{
+                            this.$message.error("上传失败");
+                        }
                     }else{
                         f.push(item)
                     }
                 })
                 return f;
+            },
+            /**
+             * 日期onChange事件
+             */
+            onDateChange(key,arg){
+                this.formData[key] = arg[1];
+            },
+            /**
+             * 序列化日期格式
+             */
+            dateNormalize(value){
+                if( typeof value == "string"){
+                    return moment(value);
+                }else if(Array.isArray(value)){
+                    return value.map((item)=>moment(item));
+                }
+                return value;
             },
             /**
              * 下拉onChange事件
@@ -179,10 +228,10 @@ import {defaultUrl} from "@http/request";
                             fieldsValue[i] = fieldsValue[i].map((item)=>{
                                 return moment(item).format("YYYY-MM-DD");
                             })
-                        }else if(type == "upload"){
+                        }else if(type == "logoUpload"){
                             let s = [];
                             fieldsValue[i].map((item)=>{
-                                s.push(item.url)
+                                s.push(item.filePath)
                             });
                             fieldsValue[i] = s.join(",");
                         }
@@ -193,7 +242,6 @@ import {defaultUrl} from "@http/request";
         },
         watch:{
             formData(v){
-                console.log(v,"vvv")
                 setTimeout(()=>{
                     let {formConfig} = this;
                     let obj = {};

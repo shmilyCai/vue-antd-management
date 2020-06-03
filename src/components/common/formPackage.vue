@@ -80,7 +80,11 @@
                     @change = "onSelectChange(arguments,value)"
                     v-decorator="[key,{rules: value.rules,},]"
                 >
-                    <a-select-option v-for = "(item) in value.option" :currentItem = "item.currentItem" :key = "(item[value.optionValue] || item.value)+''" :value="(item[value.optionValue] || item.value)+''">
+                    <a-select-option 
+                        v-for = "(item) in value.option" 
+                        :currentItem = "item.currentItem" 
+                        :key = "(item[value.optionValue] || item.value)+''" 
+                        :value="(item[value.optionValue] || item.value)+''">
                         {{item[value.optionName] || item.name}}
                     </a-select-option>
                 </a-select>
@@ -238,7 +242,7 @@ import {defaultUrl} from "@http/request";
             },
            
             /**
-             * 序列化上传那个文件
+             * 序列化上传文件
              */
             normFile(e) {
                 if (Array.isArray(e)) {

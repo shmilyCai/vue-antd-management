@@ -1,9 +1,11 @@
+import moment from "moment";
 export const listMixin = {
     data() {
         return {
             listRequest: {//请求参数
-                size: 10,
-                current: 1,
+                pageSize: 10,
+                pageNo: 1,
+                sort:"desc",
             },
             pagination: {//分页信息
                 size: 10,
@@ -16,7 +18,7 @@ export const listMixin = {
         }
     },
     created() {
-        this.getList();
+        // this.getList();
     },
     methods: {
         /**
@@ -59,21 +61,27 @@ export const listMixin = {
         },
         /**
          * 获取列表
-         * @param {}} req 
+         * @param {} req 
          */
         getList(req = {}){
             if(!this.api.listApi){
-                this.$message.warn("请先设置api.listApi");
+                // this.$message.warn("请先设置api.listApi");
                 return;
             }
             if(typeof this.api.listApi !== "function"){
-                this.$message.warn("api.listApi不是有效的function");
+                // this.$message.warn("api.listApi不是有效的function");
                 return;
             }
             let request = Object.assign(this.listRequest, req);
-            this.api.listApi(request).then(()=>{
+            this.api.listApi(request).then((result = {})=>{
                 //逻辑处理
-                this.dataSource = [];
+                let {total = 0,size = 10,current = 1} = result;
+                this.pagination = {
+                    total:Number(total),
+                    size:Number(size),
+                    current:Number(current),
+                }
+                this.dataSource = result?.records || [];
             })
             .catch(()=>{
                 this.dataSource = [];
@@ -84,6 +92,33 @@ export const listMixin = {
          */
         onExport(){
 
+        },
+        /**
+         * 日期组件默认禁用当前日期之后。
+         * @param {*} current 
+         */
+        disabledDate(current){
+            return current && current > moment().endOf("day");
+        },
+        /**
+         * 格式化时间格式
+         */
+        dateFormat(tamp,fmt = "YYYY-MM-DD HH:mm:ss"){
+            if(!tamp){
+                return "-"
+            }
+            return moment(tamp).format(fmt);
+        },
+        /**
+         * 排序
+         */
+        handleTableChange(pagination,filters,sorter){
+            let {order,field} = sorter;
+            this.listRequest.pageNo = 1;
+            this.listRequest.sort = order == "ascend"?"asc":"desc";
+            this.listRequest.orderBy = order?field:this.defaultOrderBy;
+            this.getList();
+            console.log(sorter,this.listRequest)
         },
     },
 }

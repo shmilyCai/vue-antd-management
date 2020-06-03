@@ -27,11 +27,21 @@ import {
     Divider,
     Tabs,
     Switch,
+    Spin,
+    Popconfirm,
+    Collapse,
+    Drawer,
+    Tree,
 } from 'ant-design-vue';
 
 
 import 'ant-design-vue/dist/antd.less';
 
+Vue.use(Tree);
+Vue.use(Drawer);
+Vue.use(Collapse);
+Vue.use(Popconfirm);
+Vue.use(Spin);
 Vue.use(Switch);
 Vue.use(Breadcrumb);
 Vue.use(Button);

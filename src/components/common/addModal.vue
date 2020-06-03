@@ -26,11 +26,30 @@
                         :placeholder = "value.placeholder || `请输入${value.label}`"
                         v-decorator="[key,{rules: value.rules,},]"
                     />
+                    <div class="relative" v-if = "value.type === 'inputNumber'">
+                        <a-input-number
+                            :placeholder = "value.placeholder || `请输入${value.label}`"
+                            :min = "value.min || 1"
+                            :max = "value.max || 9999"
+                            maxLength = "2"
+                            v-decorator="[key,{rules: value.rules,},]"
+                        >
+                        </a-input-number>
+                        <span class="num-unit" v-if = "!!value.unit" >{{value.unit}}</span>
+                    </div>
                     <a-textarea
                         v-if = "value.type === 'textarea'"
                         :maxLength = "value.maxLength || 30"
                         :placeholder = "value.placeholder || `请输入${value.label}`"
                         v-decorator="[key,{rules: value.rules,},]"
+                    />
+                    <a-range-picker
+                        @change = "onDateChange(key,arguments)"
+                        v-if = "value.type === 'dateRangePicker'"
+                        :disabledDate = "value.disabledDate"
+                        style = "width:100%"
+                        v-decorator="[key,{rules: value.rules,dateNormalize},]"
+                        format="YYYY-MM-DD"
                     />
                     <!-- <a-input
                         type = "password"
@@ -48,9 +67,25 @@
                             {{item.name}}
                         </a-select-option>
                     </a-select>
+                     <a-radio-group 
+                        v-if = "value.type == 'radio'"
+                        v-decorator="[
+                                        key,
+                                        {rules: value.rules},
+                                    ]"
+                        >
+                        <a-radio 
+                            v-for = "(item) in value.option" 
+                            :currentItem = "item.currentItem"
+                            :key = "(item[value.optionValue] || item.value)+''" 
+                            :value="(item[value.optionValue] || item.value)+''">
+                            {{item[value.optionName] || item.name}}
+                        </a-radio>
+                    </a-radio-group>
                     <span v-if = "value.type === 'span'">{{formData[key] || '-'}}</span>
                 </a-form-item>
             </a-form>
+            <slot></slot>    
             <div class="footer-row">
                 <a-button @click = "submit" type = "primary">确定</a-button>
                 <a-button @click = "onClose">取消</a-button>
@@ -60,6 +95,7 @@
 </template>
 
 <script>
+import moment from "moment";
     export default {
         props:{
             formConfig:{
@@ -77,9 +113,7 @@
             formItemLayout:{
                 type:Object,
                 default:()=>{
-                    return {
-                        
-                    }
+                    return {}
                 }
             },
             visible:{
@@ -111,7 +145,13 @@
                     let {formConfig} = this;
                     let obj = {};
                     for(let i in formConfig){
-                        if(formConfig[i].type != "span"){
+                        let {type,codeName} = formConfig[i];
+                        if(type != "span"){
+                            if(type === "dateRangePicker"){
+                                if(v[codeName[0]]){
+                                    v[i] = [moment(v[codeName[0]]),moment(v[codeName[1]])];
+                                }
+                            }
                             obj[i] = v[i];
                         }
                     };
@@ -119,7 +159,7 @@
                     this.form && this.form.setFieldsValue(obj);
                     if(!this.fixedTitle){
                         let type = Object.keys(v).length?"编辑":"新增";
-                        this.modalTitle = `${type}${this.modalTitle}`;
+                        this.modalTitle = `${type}${this.title}`;
                     }
                 },0)
             }
@@ -129,13 +169,48 @@
                 this.$emit("onClose");
             },
             /**
+             * 序列化日期格式
+             */
+            dateNormalize(value){
+                if( typeof value == "string"){
+                    return moment(value);
+                }else if(Array.isArray(value)){
+                    return value.map((item)=>moment(item));
+                }
+                return value;
+            },
+             /**
+             * 日期onChange事件
+             */
+            onDateChange(key,arg){
+                this.formData[key] = arg[1];
+            },
+            /**
              * 表单提交
              */
             submit(e){
                 e.preventDefault();
-                this.form.validateFields((err, values) => {
+                this.form.validateFields((err, fieldsValue) => {
                     if (!err) {
-                        console.log(values,"vvv")
+                        let {formConfig} = this;
+                        for(let i in formConfig){
+                            let {type,codeName} = formConfig[i];
+                            if (type == "dateTimePicker"){
+                                fieldsValue[i] = moment(fieldsValue[i]).format("YYYY-MM-DD HH:mm:ss");
+                            }else if(type == "datePicker"){
+                                fieldsValue[i] = moment(fieldsValue[i]).format("YYYY-MM-DD");
+                            }else if(type == "dateRangePicker"){
+                                if(fieldsValue[i]?.length){
+                                    fieldsValue[codeName[0]] = moment(fieldsValue[i][0]).format("YYYY-MM-DD");
+                                    fieldsValue[codeName[1]] = moment(fieldsValue[i][1]).format("YYYY-MM-DD");
+                                    delete fieldsValue[i];
+                                }else{
+                                    fieldsValue[codeName[0]] = undefined;
+                                    fieldsValue[codeName[1]] = undefined;
+                                }
+                            }
+                        }
+                        this.$emit("onSubmit",Object.assign(fieldsValue));
                     }
                 });
             }
@@ -145,7 +220,7 @@
 
 <style lang="scss" scoped>
 .form-modal{
-    padding:6px 56px;
+    padding:6px 40px;
     .footer-row{
         display: flex;
         justify-content: flex-end;

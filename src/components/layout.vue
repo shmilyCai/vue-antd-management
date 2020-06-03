@@ -12,7 +12,7 @@
                 <div class = "user-name">
                     <a-dropdown>
                         <span class="pointer" href="#">
-                            欢迎，张三
+                            欢迎，{{userName || "您"}}
                             <a-icon type="caret-down" />
                         </span>
                         <a-menu slot="overlay">
@@ -22,7 +22,7 @@
                         </a-menu>
                     </a-dropdown>
                 </div>
-                <div class="layout-user">
+                <div class="layout-user" @click = "onLogout">
                     <a-icon type = "logout"></a-icon>
                     <span>退出登录</span>
                 </div>
@@ -56,30 +56,31 @@
                 </div>
                 <a-layout-content class="layout-content" v-if = "!isEmpty">
                     <transition name="fade">
-                        <keep-alive>
+                        <!-- <keep-alive> -->
                             <router-view/>
-                        </keep-alive>
+                        <!-- </keep-alive> -->
                     </transition>
                 </a-layout-content>
                 <a-layout-content v-else>
                     <transition name="fade">
-                        <keep-alive>
+                        <!-- <keep-alive> -->
                             <router-view/>
-                        </keep-alive>
+                        <!-- </keep-alive> -->
                     </transition>
                 </a-layout-content>
             </a-layout>
         </a-layout>
         <a-modal 
             :footer = "null"
+            @cancel = "onLast"
             :visible = "tipModifyPwdVisible">
             <div class="pwd-wrapper">
                 <img class="pwd-tip" src="../assets/pwd-tip.png" alt="">
                 <p class="tip1">当前密码为默认密码</p>
                 <p class="tip2">为保证您的账户安全，请尽快修改</p>
                 <div>
-                    <a-button class="m-r-20" @click = "tipModifyPwdVisible = false;pwdVisible = true;" type = "primary">立即修改</a-button>
-                    <a-button @click = "tipModifyPwdVisible = false">下次再说</a-button>
+                    <a-button class="m-r-20" @click = "onTipModify" type = "primary">立即修改</a-button>
+                    <a-button @click = "onLast">下次再说</a-button>
                 </div>
             </div>
         </a-modal>
@@ -88,10 +89,14 @@
             title = "修改密码"
             fixedTitle
             @onClose = "pwdVisible = false"
+            @onSubmit = "onModifyPassword"
             :formItemLayout = "formItemLayout"
             :visible = "pwdVisible"
             :formConfig = "modifyPwdConfig">
-
+            <a-row>
+                <a-col :span = "6"></a-col>
+                <div>登录密码由6~20位字母和数字组成</div>
+            </a-row>
         </add-modal>
     </div>
 
@@ -99,10 +104,13 @@
 <script>
 import { menuList } from "../config/menuConfig";
 import {getModifyPwdConfig} from "./layoutFormConfig";
+import {logout,modifyPassword} from "@api";
+import vuecookies from "vue-cookies";
 export default {
     data() {
         return {
             collapsed: false,
+            userName:vuecookies.get("userName"),
             menuList, //模拟菜单列表
             breadList: [], //面包屑
             isEmpty:false,//是否是空的container
@@ -124,13 +132,28 @@ export default {
         this.getPath();
         let path = this.$route.path.split("/");
         this.openKeys = [`/${path[1]}`];
+        let isDefaultPassword = vuecookies.get("isDefaultPassword");
+        if(isDefaultPassword == "true"){
+            this.tipModifyPwdVisible = true;
+        }
     },
     methods: {
+        /**
+         * 退出登录
+         */
+        onLogout(){
+            vuecookies.remove("token");
+            vuecookies.remove("userName");
+            this.$router.replace("/login");
+            // logout().then((res)=>{
+            //     console.log(res,"rrr")
+            // });
+        },
         /**
          * 去登录页面
          */
         goLogin(){
-            this.$router.push("/login");
+            this.$router.push("/myAchievement");
         },
         /**
          * 路由切换
@@ -148,11 +171,41 @@ export default {
             let path = this.$route.path.split("/");
             this.openKeys = [`/${path[1]}`];
         },
+        /**
+         * 选择修改密码
+         */
         onOrgListChange(e){
             let {type} = e;
             if(type == "modifyPassword"){
                 this.pwdVisible = true;
             }
+        },
+        /**
+         * 修改密码请求
+         */
+        onModifyPassword(values){
+            modifyPassword(values).then(()=>{
+                this.$message.success("修改成功,请重新登录");
+                this.pwdVisible = false;
+                setTimeout(()=>{
+                    this.onLogout();
+                },1000)
+            })
+        },
+        /**
+         * 立即修改密码
+         */
+        onTipModify(){
+            this.tipModifyPwdVisible = false;
+            this.pwdVisible = true;
+            vuecookies.set("isDefaultPassword",false,"15min");
+        },
+        /**
+         * 下次再说
+         */
+        onLast(){
+            this.tipModifyPwdVisible = false;
+            vuecookies.set("isDefaultPassword",false,"15min");
         }
     },
     watch: {
