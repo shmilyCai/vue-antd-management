@@ -1,29 +1,16 @@
-# sms-client
+# vue-antd-management
 
-## Project setup
+## 安装依赖
 ```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn run serve
+npm i
 ```
 
-### Compiles and minifies for production
+### 项目运行
 ```
-yarn run build
-```
-
-### Run your tests
-```
-yarn run test
+npm run serve
 ```
 
-### Lints and fixes files
+### 项目打包
 ```
-yarn run lint
+npm run build
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
